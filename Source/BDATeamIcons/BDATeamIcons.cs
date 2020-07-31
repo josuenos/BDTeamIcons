@@ -3,6 +3,7 @@ using BDArmory.Modules;
 using UnityEngine;
 using BDArmory.UI;
 using BDArmory.Misc;
+using LibNoise;
 
 namespace BDTeamIcons
 {
@@ -259,8 +260,15 @@ namespace BDTeamIcons
 					}
 				}
 				v.Dispose();
-				int Teamcount = 0;
+				float Teamcount = 0;
+				float TotalTeams = 0;
+
+				// First let's count the total teams for color-picking
 				using (var teamManagers = weaponManagers.GetEnumerator())
+					while (teamManagers.MoveNext())
+						TotalTeams++;
+
+						using (var teamManagers = weaponManagers.GetEnumerator())
 					while (teamManagers.MoveNext())
 					{
 						Teamcount++;
@@ -326,51 +334,11 @@ namespace BDTeamIcons
 									{
 										icon = BDATISetup.Instance.TextureIconGeneric;
 									}
-									if (Teamcount == 1)
-									{
-										IconUIStyle.normal.textColor = Misc.ParseColor255(TeamIconSettings.TEAM_1_COLOR);
-										Teamcolor = Misc.ParseColor255(TeamIconSettings.TEAM_1_COLOR);
-									}
-									else if (Teamcount == 2)
-									{
-										IconUIStyle.normal.textColor = Misc.ParseColor255(TeamIconSettings.TEAM_2_COLOR);
-										Teamcolor = Misc.ParseColor255(TeamIconSettings.TEAM_2_COLOR);
-									}
-									else if (Teamcount == 3)
-									{
-										IconUIStyle.normal.textColor = Misc.ParseColor255(TeamIconSettings.TEAM_3_COLOR);
-										Teamcolor = Misc.ParseColor255(TeamIconSettings.TEAM_3_COLOR);
-									}
-									else if (Teamcount == 4)
-									{
-										IconUIStyle.normal.textColor = Misc.ParseColor255(TeamIconSettings.TEAM_4_COLOR);
-										Teamcolor = Misc.ParseColor255(TeamIconSettings.TEAM_4_COLOR);
-									}
-									else if (Teamcount == 5)
-									{
-										IconUIStyle.normal.textColor = Misc.ParseColor255(TeamIconSettings.TEAM_5_COLOR);
-										Teamcolor = Misc.ParseColor255(TeamIconSettings.TEAM_5_COLOR);
-									}
-									else if (Teamcount == 6)
-									{
-										IconUIStyle.normal.textColor = Misc.ParseColor255(TeamIconSettings.TEAM_6_COLOR);
-										Teamcolor = Misc.ParseColor255(TeamIconSettings.TEAM_6_COLOR);
-									}
-									else if (Teamcount == 7)
-									{
-										IconUIStyle.normal.textColor = Misc.ParseColor255(TeamIconSettings.TEAM_7_COLOR);
-										Teamcolor = Misc.ParseColor255(TeamIconSettings.TEAM_7_COLOR);
-									}
-									else if (Teamcount == 8)
-									{
-										IconUIStyle.normal.textColor = Misc.ParseColor255(TeamIconSettings.TEAM_8_COLOR);
-										Teamcolor = Misc.ParseColor255(TeamIconSettings.TEAM_8_COLOR);
-									}
-									else
-									{
-										IconUIStyle.normal.textColor = XKCDColors.Grey;
-										Teamcolor = XKCDColors.Grey;
-									}
+									// Set color
+									float h = (Teamcount-1) / TotalTeams;
+									Teamcolor = Color.HSVToRGB(h, 1f, 1f);
+									IconUIStyle.normal.textColor = Teamcolor;
+
 									DrawOnScreenIcon(wm.Current.vessel.CoM, icon, new Vector2((size * TeamIconSettings.ICONSCALE), (size * TeamIconSettings.ICONSCALE)), Teamcolor);
 									if (BDGUIUtils.WorldToGUIPos(wm.Current.vessel.CoM, out guiPos))
 									{

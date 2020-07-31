@@ -270,10 +270,18 @@ namespace BDTeamIcons
 
 				Rect TeamColorsGroup = new Rect(15, 265, toolWindowWidth - 20, teamWindowHeight);
 				GUI.BeginGroup(TeamColorsGroup, GUIContent.none, BDGuiSkin.box);
+				float Teamcount = 0;
+				float TotalTeams = 0;
+				// First let's count the total teams for color-picking
+				using (var teamManagers = weaponManagers.GetEnumerator())
+					while (teamManagers.MoveNext())
+						TotalTeams++;
+
 				using (var teamManagers = weaponManagers.GetEnumerator())
 					while (teamManagers.MoveNext())
 					{
 						i++;
+						Teamcount++;
 						Rect buttonRect = new Rect(30, -20 + (i * 25), 190, 20);
 						GUIStyle vButtonStyle = showColorSelect ? BDGuiSkin.box : BDGuiSkin.button;
 						if (GUI.Button(buttonRect, $"{teamManagers.Current.Key}", vButtonStyle))
@@ -283,38 +291,10 @@ namespace BDTeamIcons
 							LoadConfig();
 							selectedTeam = i;
 						}
-						if (i == 1)
-						{
-							title.normal.textColor = Misc.ParseColor255(TeamIconSettings.TEAM_1_COLOR);
-						}
-						else if (i == 2)
-						{
-							title.normal.textColor = Misc.ParseColor255(TeamIconSettings.TEAM_2_COLOR);
-						}
-						else if (i == 3)
-						{
-							title.normal.textColor = Misc.ParseColor255(TeamIconSettings.TEAM_3_COLOR);
-						}
-						else if (i == 4)
-						{
-							title.normal.textColor = Misc.ParseColor255(TeamIconSettings.TEAM_4_COLOR);
-						}
-						else if (i == 5)
-						{
-							title.normal.textColor = Misc.ParseColor255(TeamIconSettings.TEAM_5_COLOR);
-						}
-						else if (i == 6)
-						{
-							title.normal.textColor = Misc.ParseColor255(TeamIconSettings.TEAM_6_COLOR);
-						}
-						else if (i == 7)
-						{
-							title.normal.textColor = Misc.ParseColor255(TeamIconSettings.TEAM_7_COLOR);
-						}
-						else if (i == 8)
-						{
-							title.normal.textColor = Misc.ParseColor255(TeamIconSettings.TEAM_8_COLOR);
-						}
+
+						// Set color
+						float h = (Teamcount - 1) / TotalTeams;
+						title.normal.textColor = Color.HSVToRGB(h, 1f, 1f);
 						GUI.Label(new Rect(5, -20 + (i * 25), 25, 25), "*", title);
 					}
 				teamWindowHeight = Mathf.Lerp(teamWindowHeight, (i * 25)+5, 1);
